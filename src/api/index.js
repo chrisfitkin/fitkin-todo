@@ -6,6 +6,8 @@ import projects from './projects';
 export default ({ config, db }) => {
 	let api = Router();
 
+	// console.log('api/projects', projects)
+
 	// mount the facets resource
 	api.use('/facets', facets({ config, db }));
 	api.use('/projects', projects({ config, db }));

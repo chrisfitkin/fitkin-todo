@@ -1,7 +1,7 @@
 import resource from 'resource-router-middleware';
 import Projects from '../models/projects';
 
-export default ({ config, db }) => resource({
+export default ({ config, db: { projects: db } }) => resource({
 
 	/** Property name to store preloaded entity on `request`. */
 	id : 'project',
@@ -9,17 +9,18 @@ export default ({ config, db }) => resource({
 	/** For requests with an `id`, you can auto-load the entity.
 	 *  Errors terminate the request, success sets `req[id] = data`.
 	 */
-	// load(req, id, callback) {
-	// 	let facet = facets.find( facet => facet.id===id ),
-	// 		err = facet ? null : 'Not found';
-	// 	callback(err, facet);
-	// },
+	load: (req, id, callback) => {
+		// TODO: rewrite using model
+		db.findOne({ _id: id }, (error, project) => {
+			error = project ? null : 'Not found';
+			callback(error, project);
+		});
+	},
 
 	/** GET / - List all entities */
 	index: async ({ params }, res) => {
 		try {
-			const projects = await Projects.getProjects(db, params);
-			console.log('projects', projects);
+			const projects = await Projects.find(db, params);
 			res.json(projects);
 		} catch(error) {
 			res.status(500).send(error);
@@ -27,40 +28,38 @@ export default ({ config, db }) => resource({
 	},
 
 	/** POST / - Create a new entity */
-
 	create: async ({ body }, res) => {
 		try {
-			const project = await Projects.addProject(db, body);
-			console.log('project', project);
-			res.status(200).json(project);
+			console.log('create.body', body);
+			const project = await Projects.insert(db, body);
+			res.status(201).json(project);
 		} catch(error) {
 			res.status(500).send(error);
 		}
 	},
-	// create({ body }, res) {
-	// 	body.id = facets.length.toString(36);
-	// 	facets.push(body);
-	// 	res.json(body);
-	// },
 
 	/** GET /:id - Return a given entity */
-	// read({ facet }, res) {
-	// 	res.json(facet);
-	// },
+	read: ({ project }, res) => {
+		res.json(project);
+	},
 
 	/** PUT /:id - Update a given entity */
-	// update({ facet, body }, res) {
-	// 	for (let key in body) {
-	// 		if (key!=='id') {
-	// 			facet[key] = body[key];
-	// 		}
-	// 	}
-	// 	res.sendStatus(204);
-	// },
+	update: async ({ project, body }, res) => {
+		try {
+			const result = await Projects.update(db, project._id, body);
+			res.json(result);
+		} catch(error) {
+			res.status(500).send(error);
+		}
+	},
 
 	/** DELETE /:id - Delete a given entity */
-	// delete({ facet }, res) {
-	// 	facets.splice(facets.indexOf(facet), 1);
-	// 	res.sendStatus(204);
-	// }
+	delete: async ({ project }, res) => {
+		try {
+			const result = await Projects.remove(db, project._id);
+			res.sendStatus(204);
+		} catch(error) {
+			res.status(500).send(error);
+		}
+	},
 });
