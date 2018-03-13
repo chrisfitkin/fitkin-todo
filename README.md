@@ -18,7 +18,7 @@ PORT=8080 npm run dev
 
 Important Files
 ---------------
-
+TODO
 
 NeDB Database
 -------------
@@ -26,13 +26,27 @@ TODO
   - ## in memory, filesystem
   - ## dependency inversion
 
-Authentication
+Security
 --------------
 TODO
+  - Authentication
+    - TODO: Basic
+  - Authorization
+    - TODO: resource method, not middleware
+  - Encryption
+    - TODO: none
 
 Microservices
 -------------
 TODO
+
+Validation
+----------
+TODO
+  - minimal
+  - no type-checking
+  - ORM
+    - TODO: Date format
 
 Testing
 -------
@@ -49,7 +63,7 @@ docker build -t fitkin-todo .
 docker run -p 8080:8080 fitkin-todo
 ```
 
-Cloned from
+Initial clone from
 -----------
 TODO
 

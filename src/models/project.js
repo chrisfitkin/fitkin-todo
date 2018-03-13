@@ -3,7 +3,7 @@
  * unique name and will be used to group a list of tasks.
  */
 
-const Projects = {
+const Project = {
 
   find: (db, query) => new Promise((resolve, reject) => {
     db.projects.find(query, (error, projects) => {
@@ -97,4 +97,4 @@ const validate = (db, id, project) => new Promise ((resolve, reject) => {
   });
 });
 
-export default Projects;
+export default Project;
