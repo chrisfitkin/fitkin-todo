@@ -5,8 +5,8 @@
 
 const Projects = {
 
-  find: (db, params) => new Promise((resolve, reject) => {
-    db.find(params, (error, projects) => {
+  find: (db, query) => new Promise((resolve, reject) => {
+    db.projects.find(query, (error, projects) => {
       if(error) {
         console.error(error);
         reject(error)
@@ -16,11 +16,22 @@ const Projects = {
     });
   }),
 
+  findOne: (db, id) => new Promise((resolve, reject) => {
+    return db.projects.findOne({ _id: id }, (error, project) => {
+      if(error) {
+        console.error(error);
+        reject(error)
+      } else {
+        resolve(project);
+      }
+    });
+  }),
+
   insert: (db, project) =>  new Promise((resolve, reject) => {
     return validate(db, null, project)
       .then(({ name }) => {
         /** Insert into Projects */
-        db.insert({ name }, (error, project) => {
+        db.projects.insert({ name }, (error, project) => {
           if(error) {
             console.error(error);
             reject(error)
@@ -35,7 +46,7 @@ const Projects = {
     return validate(db, id, project)
       .then(({ name }) => {
         /** Insert into Projects */
-        db.update({ _id: id }, 
+        db.projects.update({ _id: id }, 
             { name }, 
             { returnUpdatedDocs: true}, 
             (error, count, result) => {
@@ -43,7 +54,6 @@ const Projects = {
             console.error(error);
             reject(error)
           } else {
-            console.log("UPDATED.result", result)
             resolve(result);
           }
         });
@@ -51,7 +61,7 @@ const Projects = {
   }),
 
   remove: (db, id) => new Promise((resolve, reject) => {
-    db.remove({ _id: id }, (error, countRemoved) => {
+    db.projects.remove({ _id: id }, (error, countRemoved) => {
       if(error) {
         console.error(error);
         reject(error)
@@ -78,7 +88,7 @@ const validate = (db, id, project) => new Promise ((resolve, reject) => {
       { $not: { _id: id } }
     );
   }
-  db.count(query, (error, count) => {
+  db.projects.count(query, (error, count) => {
     if (count >= 1) {
       reject('Project name must be unique');
     } else {

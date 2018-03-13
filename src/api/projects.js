@@ -1,7 +1,7 @@
 import resource from 'resource-router-middleware';
 import Projects from '../models/projects';
 
-export default ({ config, db: { projects: db } }) => resource({
+export default ({ config, db }) => resource({
 
 	/** Property name to store preloaded entity on `request`. */
 	id : 'project',
@@ -10,17 +10,19 @@ export default ({ config, db: { projects: db } }) => resource({
 	 *  Errors terminate the request, success sets `req[id] = data`.
 	 */
 	load: (req, id, callback) => {
-		// TODO: rewrite using model
-		db.findOne({ _id: id }, (error, project) => {
-			error = project ? null : 'Not found';
-			callback(error, project);
-		});
+		Projects.findOne(db, id)
+			.then((project) => {
+				const error = project ? null : 'Not found';
+				callback(error, project);
+			}).catch((error) => {
+				callback('Not found');
+			});
 	},
 
 	/** GET / - List all entities */
-	index: async ({ params }, res) => {
+	index: async ({ query }, res) => {
 		try {
-			const projects = await Projects.find(db, params);
+			const projects = await Projects.find(db, query);
 			res.json(projects);
 		} catch(error) {
 			res.status(500).send(error);
@@ -30,7 +32,6 @@ export default ({ config, db: { projects: db } }) => resource({
 	/** POST / - Create a new entity */
 	create: async ({ body }, res) => {
 		try {
-			console.log('create.body', body);
 			const project = await Projects.insert(db, body);
 			res.status(201).json(project);
 		} catch(error) {
@@ -39,7 +40,7 @@ export default ({ config, db: { projects: db } }) => resource({
 	},
 
 	/** GET /:id - Return a given entity */
-	read: ({ project }, res) => {
+	read: ({ project, ...other }, res) => {
 		res.json(project);
 	},
 
