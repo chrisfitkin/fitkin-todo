@@ -94,6 +94,7 @@ const parseDate = (date) => {
     : Date.parse(date);
 }
 
+// Enum values
 const validPriorities = [ 'low', 'medium', 'high' ];
 
 const validate = (db, id, task) => new Promise ((resolve, reject) => {
