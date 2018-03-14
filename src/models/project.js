@@ -29,9 +29,9 @@ const Project = {
 
   insert: (db, project) =>  new Promise((resolve, reject) => {
     return validate(db, null, project)
-      .then(({ name }) => {
+      .then(({ name, userId }) => {
         /** Insert into Projects */
-        db.projects.insert({ name }, (error, project) => {
+        db.projects.insert({ name, userId }, (error, project) => {
           if(error) {
             console.error(error);
             reject(error)

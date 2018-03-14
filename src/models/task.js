@@ -33,14 +33,15 @@ const Task = {
 
   insert: (db, task) =>  new Promise((resolve, reject) => {
     return validate(db, null, task)
-      .then(({ summary, description, dueDate, priority, projectId }) => {
+      .then(({ summary, description, dueDate, priority, projectId, userId }) => {
         /** Insert into Tasks */
         db.tasks.insert({ 
           summary, 
           description, 
           dueDate: parseDate(dueDate), 
           priority, 
-          projectId 
+          projectId,
+          userId
         }, (error, task) => {
           if(error) {
             console.error(error);

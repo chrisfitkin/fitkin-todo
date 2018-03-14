@@ -30,10 +30,15 @@ export default ({ config, db }) => resource({
 	},
 
 	/** POST / - Create a new entity */
-	create: async ({ body }, res) => {
+	create: async ({ body, user }, res) => {
 		try {
-			const project = await Project.insert(db, body);
-			res.status(201).json(project);
+			/** Require authenticated user */
+			if (user) {
+				const project = await Project.insert(db, { ...body, userId: user._id });
+				res.status(201).json(project);
+			} else {
+				res.status(403).send("Authentication required");
+			}
 		} catch(error) {
 			res.status(500).send(error);
 		}

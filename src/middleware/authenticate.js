@@ -7,13 +7,10 @@ import User from '../models/user';
   * aladdin@gmail.com:OpenSesame
   */
 const authenticate = ({ config, db }) => (req, res, next) => {
-  console.log('AUTHENTICATE');
   if(req.headers.authentication) {
     try {
       const authentication = req.headers.authentication.split(" ")[1];
       const credentials = Buffer.from(authentication, 'base64').toString("ascii").split(":");
-      console.log('authentication', authentication);
-      console.log('credentials', credentials);
       const [ email, password ] = credentials;
       User.authenticate(db, email, password).then((user) => {
         /** Add user to the request object for next routes */
