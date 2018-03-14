@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import initializeDb from './db';
 import middleware from './middleware';
+import authenticate from './middleware/authenticate';
 import api from './api';
 import config from './config.json';
 
@@ -28,6 +29,7 @@ initializeDb( db => {
 
 	// internal middleware
 	app.use(middleware({ config, db }));
+	app.use(authenticate({ config, db }));
 
 	// api router
 	app.use('/api', api({ config, db }));

@@ -83,16 +83,20 @@ const User = {
     });
   }),
 
-  authenticate: (db, username, password) => new Promise((resolve, reject) => {
-    return db.users.findOne({ 
-      username, 
+  authenticate: (db, email, password) => new Promise((resolve, reject) => {
+    db.users.findOne({ 
+      email, 
       password: encryptPassword(password)
     }, (error, user) => {
       if(error) {
         console.error(error);
         reject(error)
       } else {
-        resolve(user ? hidePassword(user) : null);
+        if (user) {
+          resolve(user ? hidePassword(user) : null);
+        } else {
+          reject("Invalid email or password");
+        }
       }
     });
   }),
