@@ -13,6 +13,7 @@ let app = express();
 app.server = http.createServer(app);
 
 // logger
+process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 if(process.env.NODE_ENV.toLowerCase() !=='test') {
 	app.use(morgan('dev'));
 }
