@@ -13,7 +13,9 @@ let app = express();
 app.server = http.createServer(app);
 
 // logger
-app.use(morgan('dev'));
+if(process.env.NODE_ENV.toLowerCase() !=='test') {
+	app.use(morgan('dev'));
+}
 
 // 3rd party middleware
 app.use(cors({
@@ -35,7 +37,7 @@ initializeDb( db => {
 	app.use('/api', api({ config, db }));
 
 	app.server.listen(process.env.PORT || config.port, () => {
-		console.log(`Started on port ${app.server.address().port}`);
+		console.log(`Started on port ${app.server.address().port || 'unknown'}`);
 	});
 });
 
